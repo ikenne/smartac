@@ -88,6 +88,33 @@
         </div>
       </div>
     </div>
+    <div
+        v-if="device.humidity && device.humidity.length > 0"
+        class="row">
+      <div class="col-md-3">
+        <strong>Humidity:</strong>
+      </div>
+      <div class="col-md-12">
+        <div class="table-responsive">
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>Time Acquired</th>
+                <th>Sensor value</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                v-for="humidity in device.humidity"
+                :key="humidity.date">
+                <td>{{ humidity.date }}</td>
+                <td>{{ humidity.value }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 <script>
