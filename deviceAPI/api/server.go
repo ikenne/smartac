@@ -89,13 +89,14 @@ func (s *APIServer) Stop() {
 }
 
 func (s *APIServer) registerHandlers() {
-	get, post, put, delete := http.MethodGet, http.MethodPost, http.MethodPut, http.MethodDelete
+	// get, post, put, delete := http.MethodGet, http.MethodPost, http.MethodPut, http.MethodDelete
+	get, post, put := http.MethodGet, http.MethodPost, http.MethodPut
 	s.Router.Path("/device").Methods(get).HandlerFunc(s.getAllDevices)
 	s.Router.Path("/device/service").Methods(get).HandlerFunc(s.getUnHealthyDevices)
 	s.Router.Path("/device/co2limit").Methods(get).HandlerFunc(s.getUnHealthyCO2Devices)
 
 	s.Router.Path("/device").Methods(post).HandlerFunc(s.createDevice)
-	s.Router.Path("/device/{id}").Methods(delete).HandlerFunc(s.deleteDevice)
+	// s.Router.Path("/device/{id}").Methods(delete).HandlerFunc(s.deleteDevice)
 	s.Router.Path("/device/{id}").Methods(put).HandlerFunc(s.updateDevice)
 	s.Router.Path("/device/{id}").Methods(get).HandlerFunc(s.getDevice)
 
@@ -231,18 +232,18 @@ func validateUpdate(d lib.Device) (err error) {
 	return err
 }
 
-func (s *APIServer) deleteDevice(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	key := vars["id"]
+// func (s *APIServer) deleteDevice(w http.ResponseWriter, r *http.Request) {
+// 	vars := mux.Vars(r)
+// 	key := vars["id"]
 
-	err := s.db.DeleteDevice(key)
-	if err != nil {
-		s.responsError(w, http.StatusBadRequest, err.Error())
-		return
-	}
+// 	err := s.db.DeleteDevice(key)
+// 	if err != nil {
+// 		s.responsError(w, http.StatusBadRequest, err.Error())
+// 		return
+// 	}
 
-	s.responseJSON(w, http.StatusNoContent, nil)
-}
+// 	s.responseJSON(w, http.StatusNoContent, nil)
+// }
 
 func (s *APIServer) getUnHealthyDevices(w http.ResponseWriter, r *http.Request) {
 	s.responseJSON(w, http.StatusOK, s.db.GetUnHealthyDevices(status))
