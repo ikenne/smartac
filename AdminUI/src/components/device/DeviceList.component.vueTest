@@ -1,0 +1,58 @@
+<template>
+  <div>
+    <b-row>
+      <b-col
+        md="2"
+        offset-md="10">
+        <!-- <a href="#">Create owner</a> -->
+      </b-col>
+    </b-row>
+    <br>
+    <b-row>
+      <b-col md="12">
+        <div class="table-responsive">
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>Device S/N</th>
+                <th>Registeration Date</th>
+                <th>Firmware</th>
+                <th>Details</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                v-for="device in devices"
+                :key="device.serialNumber">
+                <td>{{ device.serialNumber }}</td>
+                <td>{{ device.registrationDate }}</td>
+                <td>{{ device.firmware }}</td>
+                <td>
+                  <b-button variant="default">Details</b-button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </b-col>
+    </b-row>
+  </div>
+</template>
+<script>
+import SmartACService from '@/api-services/smartac.service'
+// import Axios from 'axios'
+
+export default {
+  name: 'OwnerList',
+  data () {
+    return {
+      devices: []
+    }
+  },
+  created () {
+    SmartACService.getAll().then((response) => {
+      this.devices = response.data
+    })
+  }
+}
+</script>
