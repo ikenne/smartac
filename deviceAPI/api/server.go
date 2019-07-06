@@ -110,13 +110,13 @@ func (s *APIServer) getDevice(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	key := vars["id"]
 
-	a, err := s.db.GetDevice(key)
+	d, err := s.db.GetDevice(key)
 	if err != nil {
 		s.responsError(w, http.StatusBadRequest, err.Error())
 		return
 	}
 
-	s.responseJSON(w, http.StatusOK, a)
+	s.responseJSON(w, http.StatusOK, d)
 }
 
 func (s *APIServer) createDevice(w http.ResponseWriter, r *http.Request) {
@@ -128,6 +128,12 @@ func (s *APIServer) createDevice(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	existing := s.checkExitingDevice(d)
+	if existing {
+		s.responsError(w, http.StatusConflict, "Device already registered")
+		return
+	}
+
 	err = validateDevice(d)
 	if err != nil {
 		s.responsError(w, http.StatusBadRequest, err.Error())
@@ -136,6 +142,15 @@ func (s *APIServer) createDevice(w http.ResponseWriter, r *http.Request) {
 
 	s.db.AddDevice(d)
 	s.responseJSON(w, http.StatusCreated, d)
+}
+
+func (s *APIServer) checkExitingDevice(d lib.Device) bool {
+	_, err := s.db.GetDevice(d.SerialNumber)
+	if err != nil {
+		return false
+	}
+
+	return true
 }
 
 func validateDevice(d lib.Device) (err error) {
